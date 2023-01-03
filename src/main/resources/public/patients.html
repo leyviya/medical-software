@@ -1,0 +1,366 @@
+<div class="container-fluid">
+    <!-- Header Start -->
+    <div class="row header">
+
+        <div class="col-md-10">
+            <h4>{{scope.siteTitle}}</h4>
+        </div>
+    </div>
+    <!-- Header Ends Grace misunderstood will always lead to jealousy -->
+
+    <div class="row">
+
+        <!-- Menu Area Start -->
+        <div class="col-md-2 bg-info menucontent">
+
+            <a href="#!patients" class="panel text-primary">
+                <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{user.firstname}}</h4>
+            </a>
+
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a ng-href="#!transactions"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Transactions
+                    </a>
+                </li>
+                <li class="active" role="presentation">
+                    <a ng-href="#!patients">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    Patients</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients-activity">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Patients Activity</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!department">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Departments</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!staff">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Staff</a>
+                </li>
+                <li role="presentation">
+                    <a href="#" onclick="window.location.reload()">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Logout</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Menu Ares Ends  -->
+
+        <!--   Content Area start  -->
+        <div class="col-md-10 maincontent">
+
+            <!--  Content Menu Tab Start   -->
+            <div class="panel panel-default contentinside">
+                <div class="panel-heading">Manage Patients</div>
+                <div class="text-center text-danger" ng-if="genServerResponse.length !== 0">
+                    {{genServerResponse}}
+                </div>
+                <!--   Panel Body Start   -->
+                <div class="panel-body">
+                    <ul class="nav nav-tabs doctor">
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hidePatientNew();restoreTable();"
+                                ng-class="dom.patientList ? 'active' : ''">Patients List</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hidePatientList();"
+                                ng-class="dom.patientNew ? 'active' : ''">New Patient</a>
+                        </li>
+                        <li class="pull-right form-inline" style="padding-right: 60px;" role="presentation">
+                            <input type="text" class="form-control" ng-model="scope.searchPatientCode"
+                                placeholder="Enter Patient Code to Search" required>
+                            <button class="btn btn-sm" ng-click="$event.preventDefault(); showPatientActivity();">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button> | 
+                            <button ng-click="scope.exportCsv(scope.patients);" class="btn btn-xs btn-info">
+                                <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!--   Display Transactions Data List start   -->
+
+                    <div class="switchgroup" ng-if="dom.patientList === true">
+                        <table ng-if="scope.patients.length !== 0" class="table table-bordered table-hover">
+                            <tr class="active">
+                                <td>Code</td>
+                                <td>Patient Name</td>
+                                <td>Age</td>
+                                <td>Gender</td>
+                                <td>Card Type</td>
+                                <td>Birth Date</td>
+                                <td>
+                                    Options
+                                </td>
+                            </tr>
+                            <tr ng-repeat="patient in scope.patients">
+                                <td>{{code(patient.code)}}</td>
+                                <td>{{patient.patientDetailEntity.firstname +' '+patient.patientDetailEntity.lastname }}
+                                </td>
+                                <td>{{patient.patientDetailEntity.age}}</td>
+                                <td>{{patient.patientDetailEntity.gender}}</td>
+                                <td>{{patient.patientCardType}}</td>
+                                <td>{{patient.dob}}</td>
+                                <td>
+                                    <button ng-click="viewPatient(patient)" type="button" class="btn btn-sm btn-primary"
+                                        data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-expand" aria-hidden="true"></span> View
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div ng-if="scope.patients.length === 0" class="well well-lg">
+                            No Records to show
+                        </div>
+                    </div>
+                    <!--   Display Transactions Data List ends   -->
+
+                    <!--   Add Transaction Start   -->
+                    <div class="switchgroup" ng-if="dom.patientNew === true">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="text-danger" ng-if="newPatientServerResponse.length !== 0">
+                                    {{newPatientServerResponse}}
+                                </div>
+                                <form class="form-horizontal row">
+                                    <div class="col-md-12">
+                                        <h3>New Patient Record Form</h3>
+                                        <table class="table table-responsive table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <br />
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span>First Name <b>*</b></span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.firstname"
+                                                            placeholder="Enter Patient First Name" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Last Name <b>*</b></span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.lastname"
+                                                            placeholder="Enter Patient Last Name" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Patient Phone Number</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.phone"
+                                                            placeholder="Enter Patient Phone Number">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Next of Kin's Full Name</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.nextOfKinName"
+                                                            placeholder="Next of Kin's Full Name">
+                                                    </td>
+                                                    <td>
+                                                        <span>Next of Kin's Phone number</span>
+                                                        <input type="number" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.nextOfKinPhone"
+                                                            placeholder="Next of Kin's Phone number">
+                                                    </td>
+                                                    <td>
+                                                        <span>Next of Kin's Full Address</span>
+                                                        <textarea class="form-control"
+                                                            ng-model="scope.currentPatientDetails.nextOfKinAddress"
+                                                            placeholder="Enter Next of Kin's Full Address"></textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Doctor in Charge <b>*</b></span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.doctorInCharge"
+                                                            placeholder="Enter Doctor's Full Name" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Nurse in Charge</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.nurseInCharge"
+                                                            placeholder="Enter Nurse's Full Name" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Patient's Full Address <b>*</b></span>
+                                                        <textarea class="form-control"
+                                                            ng-model="scope.currentPatientDetails.currentAddress"
+                                                            placeholder="Enter Patient's Full Address"
+                                                            required></textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Patient's Date of Birth <b>*</b></span>
+                                                        <input type="date" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.dateOfBirth"
+                                                            placeholder="Patient's Date of Birth" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Patient's State of Origin</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentPatientDetails.stateOfOrigin"
+                                                            placeholder="Patient's State of Origin" required>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">
+                                                                Gender <b>*</b>
+                                                            </span>
+                                                            <select ng-model="scope.selected_gender"
+                                                                class="form-control">
+                                                                <option
+                                                                    ng-repeat="gender in [{v: 'm', l:'Male'},{v: 'f', l:'Female'}]"
+                                                                    value="{{gender.v}}">
+                                                                    {{gender.l}}</option>
+
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">
+                                                                Card Type
+                                                            </span>
+                                                            <select ng-model="scope.selected_cardtype"
+                                                                class="form-control">
+                                                                <option
+                                                                    ng-repeat="type in [{v: 'ANTENATAL', l:'ANTENATAL'},{v: 'INDIVIDUAL', l:'INDIVIDUAL'},{v: 'FAMILY', l:'FAMILY'},{v: 'NHIS', l:'NHIS'}]"
+                                                                    value="{{type.v}}">
+                                                                    {{type.l}}</option>
+
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-4 col-sm-10">
+                                            <button ng-click="$event.preventDefault(); addNewPatient();" type="submit"
+                                                class="btn btn-danger">
+                                                Register Patient
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--   Add Transaction Ends   -->
+                </div>
+                <!--   Panel Body Ends   -->
+            </div>
+            <!--  Content Menu Tab Ends   -->
+        </div>
+        <!--   Content Area Ends  -->
+    </div>
+
+    <!-- Invoice Modal Start -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Patient Detail</h4>
+                </div>
+                <div class="modal-body" style="max-height: 500px;overflow-y:auto;">
+                    <div class="text-danger" ng-if="genServerResponse.length !== 0">
+                        {{genServerResponse}}
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <td><strong>First Name</strong><br />
+                                <input type="text" class="form-control"
+                                 ng-model="scope.currentPatientView.patientDetailEntity.firstname">
+                            </td>
+                            <td><strong>Phone</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.phone">
+                            </td>
+                            <td>
+                                <strong>Gender</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.gender}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Last Name</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.lastname">
+                            </td>
+                            <td><strong>Date of Birth</strong><br />
+                                {{scope.currentPatientView.dob}} (Aged:
+                                {{scope.currentPatientView.patientDetailEntity.age}})
+                            </td>
+                            <td><strong>Patient Code</strong><br />
+                                {{code(scope.currentPatientView.code)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Next of Kin's Name</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.nextOfKinName">
+                            </td>
+                            <td><strong>Next of Kin Phone</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.nextOfKinPhone">
+                            </td>
+                            <td><strong>Doctor in Charge</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.doctorInCharge">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nurse In Charge</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.nurseInCharge">
+                            </td>
+                            <td><strong>State of Origin</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.stateOfOrigin">
+                            </td>
+                            <td><strong>Patient Address</strong><br />
+                                <textarea class="form-control"
+                                ng-model="scope.currentPatientView.patientDetailEntity.currentAddress"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default"
+                     data-dismiss="modal" title="Click to close Modal Window">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                    <button ng-if="user.privilege.managePatient === true"
+                        ng-click="editPatient(scope.currentPatientView)" type="button" class="btn btn-sm btn-warning"
+                        data-dismiss="modal" title="Click to Edit Patient">
+                        <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                    </button>
+                    <button ng-if="user.privilege.managePatient === true"
+                        ng-click="deletePatient(scope.currentPatientView)" type="button" class="btn btn-sm btn-danger"
+                        data-dismiss="modal" title="Click to Delete Patient">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--   Modal ends here  -->
+
+</div>

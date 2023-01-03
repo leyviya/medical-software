@@ -1,0 +1,243 @@
+<div class="container-fluid">
+    <!-- Header Start -->
+    <div class="row header">
+
+        <div class="col-md-10">
+            <h4>{{scope.siteTitle}}</h4>
+        </div>
+    </div>
+    <!-- Header Ends Grace misunderstood will always lead to jealousy -->
+
+    <div class="row">
+
+        <!-- Menu Area Start -->
+        <div class="col-md-2 bg-info menucontent">
+
+            <a href="#!transactions" class="panel text-primary">
+                <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{user.firstname}}</h4>
+            </a>
+
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active" role="presentation">
+                    <a ng-href="#!transactions"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Transactions
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    Patients</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients-activity">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Patients Activity</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!department">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Departments</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!staff">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Staff</a>
+                </li>
+                <li role="presentation">
+                    <a href="#" onclick="window.location.reload()">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Logout</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Menu Ares Ends  -->
+
+        <!--   Content Area start  -->
+        <div class="col-md-10 maincontent">
+
+            <!--  Content Menu Tab Start   -->
+            <div class="panel panel-default contentinside">
+                <div class="panel-heading">Manage Transactions</div>
+                <div class="text-center text-danger" ng-if="genServerResponse.length !== 0">
+                    {{genServerResponse}}
+                </div>
+                <div class="text-center text-success" style="padding-top:2px;font-weight: bold;" ng-if="genNotif.length !== 0">
+                    {{genNotif}}
+                </div>
+                <!--   Panel Body Start   -->
+                <div class="panel-body">
+                    <ul class="nav nav-tabs doctor">
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideTransNew();restoreTable();"
+                                ng-class="doc.transList ? 'active' : ''">Transactions List</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideTransList();"
+                                ng-class="doc.transNew ? 'active' : ''">New Transaction</a>
+                        </li>
+                        <li class="pull-right form-inline" style="padding-right: 60px;" role="presentation">
+                            <input type="date" class="form-control"
+                                ng-model="scope.searchTransDate"
+                                placeholder="Enter Date to filter on" required>
+                                <button class="btn btn-sm" ng-click="$event.preventDefault(); showTransactionDateList();">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button> | 
+                                <button ng-click="scope.exportCsv(scope.transactions);" class="btn btn-xs btn-info">
+                                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                                </button>
+                        </li>
+                    </ul>
+
+                    <!--   Display Transactions Data List start   -->
+
+                    <div class="switchgroup" ng-if="doc.transList === true">
+                        <table ng-if="scope.transactions.length !== 0" class="table table-bordered table-hover">
+                            <tr class="active">
+                                <td>Date</td>
+                                <td>Department</td>
+                                <td>Staff Admin</td>
+                                <td>Total Cost</td>
+                            </tr>
+                            <tr ng-repeat="transaction in scope.transactions" ng-class="transaction.broken === true ? 'left-red': ''">
+                                <td>{{transaction.date}}</td>
+                                <td>{{transaction.department.title}}</td>
+                                <td>{{transaction.staff.username}}</td>
+                                <td>N{{sumTransactDetailsCost(transaction.transactionItemDetailEntities)}}</td>
+                                <td>
+                                    <button
+                                        ng-click="setCurrentInvoice(transaction.transactionItemDetailEntities, transaction.date, transaction.id)"
+                                        type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                        data-target="#myModal">
+                                        <span class="glyphicon glyphicon-expand" aria-hidden="true"></span> View
+                                    </button>
+                                    <button
+                                        ng-click="breakTransaction(transaction.id)"
+                                        ng-if="!transaction.broken"
+                                        type="button" class="btn btn-sm btn-danger">
+                                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> 
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div ng-if="scope.transactions.length === 0" class="well well-lg">
+                            No Records to show yet
+                        </div>
+                    </div>
+                    <!--   Display Transactions Data List ends   -->
+
+                    <!--   Add Transaction Start   -->
+                    <div class="switchgroup" ng-if="doc.transNew === true">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="text-danger" ng-if="newTransServerResponse.length !== 0">
+                                    {{newTransServerResponse}}
+                                </div>
+                                <form class="form-horizontal row">
+                                    <div class="col-md-12">
+
+                                        <table class="table table-responsive table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-addon" id="sizing-addon1">
+                                                            <span class="glyphicon glyphicon-th"
+                                                                aria-hidden="true"></span>
+                                                        </span>
+                                                        <select ng-model="scope.selected_dept" class="form-control">
+                                                            <option selected="selected" name="userrole" value="-">Select
+                                                                Department
+                                                            </option>
+                                                            <option ng-repeat="dept in scope.depts" value="{{dept.id}}">
+                                                                {{dept.title}}</option>
+
+                                                        </select>
+                                                    </div>
+                                                </tr>
+                                            </thead>
+                                            <tr class="active">
+                                                <td>Item Quantity</td>
+                                                <td>Description</td>
+                                                <td>Price (Naira)</td>
+                                            </tr>
+                                            <tr ng-repeat="item in scope.currentTransDetails">
+                                                <td><input type="number" class="form-control" name="quantity"
+                                                        ng-model="item.itemQuantity" style="width:100px"
+                                                        placeholder="Enter Transaction item Quantity">
+                                                </td>
+                                                <td><input type="text" class="form-control" name="description"
+                                                        ng-model="item.itemDescription" style="width:800px"
+                                                        placeholder="Enter Transaction item Description">
+                                                </td>
+                                                <td><input type="number" class="form-control" name="quantity"
+                                                        style="width:100px" ng-model="item.itemPrice"
+                                                        placeholder="Enter Transaction item Price">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-4 col-sm-10">
+                                            <button ng-click="addTransDetail()" class="btn btn-info">Add
+                                                Item</button>
+                                            <button
+                                                ng-click="$event.preventDefault(); addNewTrans(scope.selected_dept);"
+                                                type="submit" class="btn btn-danger">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--   Add Transaction Ends   -->
+                </div>
+                <!--   Panel Body Ends   -->
+            </div>
+            <!--  Content Menu Tab Ends   -->
+        </div>
+        <!--   Content Area Ends  -->
+    </div>
+
+    <!-- Invoice Modal Start -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Transaction Detail</h4>
+                </div>
+                <div class="modal-body" style="max-height: 500px;overflow-y:auto;">
+                    <table class="table table-bordered table-hover">
+                        <tr class="active">
+                            <td>Quantity</td>
+                            <td>Description</td>
+                            <td>Price (Naira)</td>
+                        </tr>
+                        <tr ng-repeat="invoice in scope.currentInvoice">
+                            <td>{{invoice.itemQuantity}}</td>
+                            <td>{{invoice.itemDescription}}</td>
+                            <td>N{{invoice.itemPrice}}</td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                    <button ng-click="printCurrentInvoice(scope.currentInvoiceId, scope.currentInvoice, scope.currentInvoiceDate, user.username, user.code)"
+                        type="button" class="btn btn-sm btn-primary">
+                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--   Modal ends here  -->
+
+</div>

@@ -1,0 +1,320 @@
+<div class="container-fluid">
+    <!-- Header Start -->
+    <div class="row header">
+
+        <div class="col-md-10">
+            <h4>{{scope.siteTitle}}</h4>
+        </div>
+    </div>
+    <!-- Header Ends Grace misunderstood will always lead to jealousy -->
+
+    <div class="row">
+
+        <!-- Menu Area Start -->
+        <div class="col-md-2 bg-info menucontent">
+
+            <a href="#!staff" class="panel text-primary">
+                <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{user.firstname}}</h4>
+            </a>
+
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a ng-href="#!transactions"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Transactions
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    Patients</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients-activity">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Patients Activity</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!department">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Departments</a>
+                </li>
+                <li class="active" role="presentation">
+                    <a ng-href="#!staff">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Staff</a>
+                </li>
+                <li role="presentation">
+                    <a href="#" onclick="window.location.reload()">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Logout</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Menu Ares Ends  -->
+
+        <!--   Content Area start  -->
+        <div class="col-md-10 maincontent">
+
+            <!--  Content Menu Tab Start   -->
+            <div class="panel panel-default contentinside">
+                <div class="panel-heading">Manage Staff</div>
+                <div class="text-center text-danger" ng-if="genServerResponse.length !== 0">
+                    {{genServerResponse}}
+                </div>
+                <!--   Panel Body Start   -->
+                <div class="panel-body">
+                    <ul class="nav nav-tabs doctor">
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideStaffNew();restoreTable();"
+                                ng-class="dom.staffList ? 'active' : ''">Staff List</a>
+                        </li>
+                        <li ng-if="user.privilege.manageStaff === true" role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideStaffList();"
+                                ng-class="dom.staffNew ? 'active' : ''">New Staff</a>
+                        </li>
+                        <li class="pull-right form-inline" style="padding-right: 60px;" role="presentation">
+                            <input type="text" class="form-control"
+                                ng-model="scope.searchStaffCode"
+                                placeholder="Enter Staff Code to Search" required>
+                                <button class="btn btn-sm" ng-click="$event.preventDefault(); showStaffActivity();">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button>
+                        </li>
+                    </ul>
+
+                    <!--   Display Transactions Data List start   -->
+
+                    <div class="switchgroup" ng-if="dom.staffList === true">
+                        <table ng-if="scope.staffList.length !== 0" class="table table-bordered table-hover">
+                            <tr class="active">
+                                <td>Code</td>
+                                <td>Staff Name</td>
+                                <td>Department</td>
+                                <td>Username</td>
+                                <td>Phone Number</td>
+                                <td>Date Added</td>
+                                <td>Options</td>
+                            </tr>
+                            <tr ng-repeat="staff in scope.staffList">
+                                <td>{{staff.code}}</td>
+                                <td>{{staff.firstname +' '+staff.lastname }}
+                                </td>
+                                <td>{{staff.dept.title}}</td>
+                                <td>{{staff.username}}</td>
+                                <td>{{staff.phone}}</td>
+                                <td>{{staff.date}}</td>
+                                <td>
+                                    <button ng-click="viewStaff(staff)" type="button" class="btn btn-sm btn-primary"
+                                        data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-expand" aria-hidden="true"></span> View
+                                    </button>
+                                    <button ng-if="user.privilege.manageStaff === true" ng-click="deleteStaff(staff)"
+                                        type="button" class="btn btn-sm btn-danger" data-dismiss="modal">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div ng-if="scope.staffList.length === 0" class="well well-lg">
+                            No Records to show yet
+                        </div>
+                    </div>
+                    <!--   Display Transactions Data List ends   -->
+
+                    <!--   Add Transaction Start   -->
+                    <div class="switchgroup" ng-if="dom.staffNew === true">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="text-danger" ng-if="newStaffServerResponse.length !== 0">
+                                    {{newStaffServerResponse}}
+                                </div>
+                                <form class="form-horizontal row">
+                                    <div class="col-md-12">
+                                        <h3>New Staff</h3>
+                                        <table class="table table-responsive table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <br />
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span>First Name</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentStaffDetails.firstname"
+                                                            placeholder="Enter Staff First Name" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Last Name</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentStaffDetails.lastname"
+                                                            placeholder="Enter Staff Last Name" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Phone Number</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentStaffDetails.phone"
+                                                            placeholder="Enter Staff Phone Number">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Username 
+                                                            <small><i>(will be used to login)</i></small>
+                                                        </span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentStaffDetails.username"
+                                                            placeholder="Staff's Username" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Password<small><i>(will be used to login)</i>
+                                                        </span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentStaffDetails.pwd"
+                                                            placeholder="Staff's Password" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Staff's Full Address</span>
+                                                        <textarea class="form-control"
+                                                            ng-model="scope.currentStaffDetails.address"
+                                                            placeholder="Enter Staff's Full Address"
+                                                            required></textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">
+                                                                <span class="glyphicon glyphicon-th"
+                                                                    aria-hidden="true"></span>
+                                                            </span>
+                                                            <select ng-model="scope.selected_dept" class="form-control">
+                                                                <option selected="selected" name="userrole" value="-">Select
+                                                                    Department
+                                                                </option>
+                                                                <option ng-repeat="dept in scope.depts" value="{{dept.id}}">
+                                                                    {{dept.title}}</option>
+    
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">
+                                                                <span class="glyphicon glyphicon-th"
+                                                                    aria-hidden="true"></span>
+                                                            </span>
+                                                            <select ng-model="scope.selected_privilege" class="form-control">
+                                                                <option selected="selected" value="-">Select
+                                                                    Access Role
+                                                                </option>
+                                                                <option ng-repeat="priv in [{ id: '1', l: 'Manager' }, { id: '2', l: 'Admin' }]" value="{{priv.id}}">
+                                                                    {{priv.l}}</option>
+    
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-4 col-sm-10">
+                                            <button ng-click="$event.preventDefault(); addNewStaff();" type="submit"
+                                                class="btn btn-danger">
+                                                Register Staff
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--   Add Transaction Ends   -->
+                </div>
+                <!--   Panel Body Ends   -->
+            </div>
+            <!--  Content Menu Tab Ends   -->
+        </div>
+        <!--   Content Area Ends  -->
+    </div>
+
+    <!-- Invoice Modal Start -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Staff Detail</h4>
+                </div>
+                <div class="modal-body" style="max-height: 500px;overflow-y:auto;">
+                    <div class="text-danger" ng-if="genServerResponse.length !== 0">
+                        {{genServerResponse}}
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <td><strong>First Name *</strong><br />
+                                <input type="text" class="form-control"
+                                 ng-model="scope.currentStaffView.firstname" required>
+                            </td>
+                            <td><strong>Phone</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentStaffView.phone" required>
+                            </td>
+                            <td><strong>Staff Code</strong><br />
+                                {{scope.currentStaffView.code}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Last Name *</strong><br />
+                                <input type="text" class="form-control"
+                                 ng-model="scope.currentStaffView.lastname" required>
+                            </td>
+                            <td><strong>Department </strong><br />
+                                {{scope.currentStaffView.dept.title}}
+                            </td>
+                            <td><strong>Joined Date</strong><br />
+                                {{scope.currentStaffView.date}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Access Role</strong><br />
+                                {{scope.privilege[scope.currentStaffView.privilegeId]}}
+                            </td>
+                            <td><strong>Username</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentStaffView.username" required>
+                            </td>
+                            <td><strong>New Password</strong><br />
+                                <input type="text" class="form-control"
+                                ng-model="scope.currentStaffView.npwd" required>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default"
+                     data-dismiss="modal" title="Click to close Modal Window">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                    <button ng-if="user.privilege.managePatient === true"
+                        ng-click="editStaff(scope.currentStaffView)" type="button" class="btn btn-sm btn-warning"
+                        data-dismiss="modal" title="Click to Edit Staff">
+                        <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                    </button>
+                    <button ng-if="user.privilege.managePatient === true"
+                        ng-click="deletePatient(scope.currentStaffView)" type="button" class="btn btn-sm btn-danger"
+                        data-dismiss="modal" title="Click to Delete Patient">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--   Modal ends here  -->
+
+</div>

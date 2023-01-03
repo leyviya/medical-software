@@ -1,0 +1,69 @@
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row navbar-fixed-top">
+        <nav class="navbar navbar-default header">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand logo" href="#">
+                        <img alt="Brand" src="assets/images/logo.png">
+                    </a>
+                    <div class="navbar-text title"><p>{{scope.siteTitle}}<p></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!-- Header Ends Here -->
+
+    <div class="row" style="margin-top: 60px">
+        <div class="col-md-12">
+            <div class="panel panel-default login">
+                <div class="panel-heading logintitle">Staff Login</div>
+
+                <div class="panel-body">
+                    <div class="alert alert-danger" ng-if="scope.error.length !== 0">
+                        {{scope.error}}
+                    </div>
+                    <form class="form-horizontal center-block" role="form" ng-submit="scope.getLoginToken(scope.username, scope.pwd)">
+                        <!--
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon" id="sizing-addon1">
+                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            </span>
+                            <select class="form-control" >
+                                <option selected="selected" name="userrole">Select User</option>
+                                <option value="admin">Admin</option>
+                                <option value="manager">Manager</option>
+
+                            </select>
+                        </div>
+                        <br/>
+                    -->
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon" ><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                            <input ng-model="scope.username" type="text" class="form-control" name="text" placeholder="Enter Staff Username" required aria-describedby="sizing-addon1">
+                        </div>
+
+                        <br/>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon" ><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+                            <input ng-model="scope.pwd" type="password" name="password" class="form-control" placeholder="Enter Staff Password" required aria-describedby="sizing-addon1">
+                        </div>
+                        <br/>
+                        <div class="col-sm-7 col-sm-offset-2">
+                            <button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>				
+    </div>
+
+    <div class="row footer navbar-fixed-bottom">
+        <div class="col-md-12">
+            <div>Copyrights &copy; Leyla Abdullayeva 2022. All rights reserved. </div>
+            <p>Built By <a href="https://www.linkedin.com/in/leyla-abdullayeva-557138197/">Leyla Abdullayeva</a></p>
+        </div>
+    </div>
+</div>

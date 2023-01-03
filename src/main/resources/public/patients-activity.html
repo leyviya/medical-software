@@ -1,0 +1,290 @@
+<div class="container-fluid">
+    <!-- Header Start -->
+    <div class="row header">
+
+        <div class="col-md-10">
+            <h4>{{scope.siteTitle}}</h4>
+        </div>
+    </div>
+    <!-- Header Ends Grace misunderstood will always lead to jealousy -->
+
+    <div class="row">
+
+        <!-- Menu Area Start -->
+        <div class="col-md-2 bg-info menucontent">
+
+            <a href="#!patients-activity" class="panel text-primary">
+                <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{user.firstname}}</h4>
+            </a>
+
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a ng-href="#!transactions"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Transactions
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    Patients</a>
+                </li>
+                <li class="active" role="presentation">
+                    <a ng-href="#!patients-activity">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Patients Activity</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!department">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Departments</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!staff">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Staff</a>
+                </li>
+                <li role="presentation">
+                    <a href="#" onclick="window.location.reload()">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Logout</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Menu Ares Ends  -->
+
+        <!--   Content Area start  -->
+        <div class="col-md-10 maincontent">
+
+            <!--  Content Menu Tab Start   -->
+            <div class="panel panel-default contentinside">
+                <div class="panel-heading">Manage Patients</div>
+                <div class="text-center text-danger" ng-if="genServerResponse.length !== 0">
+                    {{genServerResponse}}
+                </div>
+                <!--   Panel Body Start   -->
+                <div class="panel-body">
+                    <ul class="nav nav-tabs doctor">
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideActivityNew();restoreTable();"
+                                ng-class="dom.activityList ? 'active' : ''">Patients Activities List</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideActivityList();"
+                                ng-class="dom.activityNew ? 'active' : ''">New Patient Activity</a>
+                        </li>
+                        <li class="pull-right form-inline" style="padding-right: 60px;" role="presentation">
+                            <input type="date" class="form-control"
+                                ng-model="scope.searchAppointDate"
+                                placeholder="Enter Date to filter on" required>
+                                <button class="btn btn-sm" ng-click="$event.preventDefault(); showAppointmentDateList();">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button>
+                        </li>
+                        <li class="pull-right form-inline" style="padding-right: 60px;" role="presentation">
+                            <input type="text" class="form-control"
+                                ng-model="scope.searchPatientCode"
+                                placeholder="Enter Patient Code to Search" required>
+                                <button class="btn btn-sm" ng-click="$event.preventDefault(); showPatientActivity();">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button> | 
+                                <button ng-click="scope.exportCsv(scope.activities);" class="btn btn-xs btn-info">
+                                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                                </button>
+                        </li>
+                    </ul>
+
+                    <!--   Display Transactions Data List start   -->
+
+                    <div class="switchgroup" ng-if="dom.activityList === true">
+                        <table ng-if="scope.activities.length !== 0" class="table table-bordered table-hover">
+                            <tr class="active">
+                                <td>Date Time</td>
+                                <td>Patient Code</td>
+                                <td>Activity Description</td>
+                                <td>Staff In Charge</td>
+                                <td>Next Appointment</td>
+                            </tr>
+                            <tr ng-repeat="activity in scope.activities">
+                                <td>{{activity.date}}</td>
+                                <td>
+                                    {{code(activity.patient.code) }}
+                                </td>
+                                <td>{{activity.activityType}}</td>
+                                <td>{{activity.staff.username}}</td>
+                                <td>{{showDate(activity.nextAppointDate)}}</td>
+                                <td>
+                                    <button ng-click="viewActivity(activity)" type="button"
+                                        class="btn btn-sm btn-primary" data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-expand" aria-hidden="true"></span> View
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div ng-if="scope.activities.length === 0" class="well well-lg">
+                            No Records to show
+                        </div>
+                    </div>
+                    <!--   Display Transactions Data List ends   -->
+
+                    <!--   Add Transaction Start   -->
+                    <div class="switchgroup" ng-if="dom.activityNew === true">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="text-danger" ng-if="newActivityServerResponse.length !== 0">
+                                    {{newActivityServerResponse}}
+                                </div>
+                                <form class="form-horizontal row">
+                                    <div class="col-md-12">
+                                        <h3>New Patient Activity</h3>
+                                        <table class="table table-responsive table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <br />
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">
+                                                                Activity Type
+                                                            </span>
+                                                            <select ng-model="scope.selected_activity_type"
+                                                                class="form-control">
+                                                                <option ng-repeat="gender in scope.activityTypes"
+                                                                    value="{{gender.v}}"> {{gender.l}}</option>
+
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span>Patient's Code</span>
+                                                        <form class="form-inline">
+                                                            <input type="text" class="form-control"
+                                                                ng-model="scope.currentActivityDetails.patientCode"
+                                                                ng-click="scope.currentActivityView.patient = undefined; scope.currentActivityDetails.remarks = ''"
+                                                                placeholder="Enter Patient's Code" required>
+                                                            <button
+                                                                ng-click="$event.preventDefault(); findPatientByCode();"
+                                                                type="submit" class="btn btn-danger btn-sm">
+                                                                Find Patient
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                    <td ng-if="scope.currentActivityView.patient">
+                                                        <span>Found Patient</span>
+                                                        <div class="well well-sm">
+                                                            <strong>Name:</strong>
+                                                            {{scope.currentActivityView.patient.patientDetailEntity.firstname +' '+scope.currentActivityView.patient.patientDetailEntity.lastname}}
+                                                            <br /><strong>Code:</strong>
+                                                            {{code(scope.currentActivityView.patient.code)}}
+                                                            <br /><strong>Gender:</strong>
+                                                            {{scope.currentActivityView.patient.patientDetailEntity.gender }}
+                                                            <br /><strong>Age:</strong>
+                                                            {{scope.currentActivityView.patient.patientDetailEntity.age }} 
+                                                            <br /><strong>Current Appointment:</strong>
+                                                            {{showDate(scope.currentActivityView.nextAppointDate)}} 
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Enter Patient's next appointment Date & Time</span>
+                                                        <input type="date" class="form-control"
+                                                            ng-model="scope.currentActivityDetails.nextAppointmentDate"
+                                                            placeholder="Date" required>
+                                                        <input type="time" class="form-control"
+                                                            ng-model="scope.currentActivityDetails.nextAppointmentTime"
+                                                            placeholder="Time" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Patient Activity Remarks</span>
+                                                        <textarea class="form-control"
+                                                            ng-model="scope.currentActivityDetails.remarks"
+                                                            placeholder="Activity Remarks" required></textarea>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="form-group" ng-if="scope.currentActivityView.patient">
+                                        <div class="col-sm-offset-4 col-sm-10">
+                                            <button ng-click="$event.preventDefault(); addNewActivity();" type="submit"
+                                                class="btn btn-danger">
+                                                Add Patient Activity
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--   Add Transaction Ends   -->
+                </div>
+                <!--   Panel Body Ends   -->
+            </div>
+            <!--  Content Menu Tab Ends   -->
+        </div>
+        <!--   Content Area Ends  -->
+    </div>
+
+    <!-- Invoice Modal Start -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Patient Detail</h4>
+                </div>
+                <div class="modal-body" style="max-height: 500px;overflow-y:auto;">
+                    <div class="text-danger" ng-if="genServerResponse.length !== 0">
+                        {{genServerResponse}}
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <td><strong>Patient Name</strong><br />
+                                {{scope.currentActivityView.patient.patientDetailEntity.firstname +' '+scope.currentActivityView.patient.patientDetailEntity.lastname}}
+                            </td>
+                            <td><strong>Patient Age</strong><br />
+                                {{scope.currentActivityView.patient.patientDetailEntity.age}}</td>
+                            <td><strong>Patient Gender</strong><br />
+                                {{scope.currentActivityView.patient.patientDetailEntity.gender}}
+                        </tr>
+                        <tr>
+                            <td><strong>Activity</strong><br />
+                                {{scope.currentActivityView.activityType}}</td>
+                            <td><strong>Date Time of Activity</strong><br />
+                                {{scope.currentActivityView.date}}</td>
+                            <td><strong>Admin In Charge</strong><br />
+                                {{scope.currentActivityView.staff.username}}
+                        </tr>
+                        <tr>
+                            <td><strong>Doctor in Charge</strong><br />
+                                {{scope.currentActivityView.patient.patientDetailEntity.doctorInCharge}}</td>
+                            <td><strong>Nurse in Charge</strong><br />
+                                {{scope.currentActivityView.patient.patientDetailEntity.nurseInCharge}}</td>
+                            <td><strong>Next Appointment</strong><br />
+                                {{scope.currentActivityView.nextAppointDate}}
+                        </tr>
+                        <tr>
+                            <td>
+                                <td><strong>Last Remark</strong><br />
+                                    {{scope.currentActivityView.remarks}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--   Modal ends here  -->
+
+</div>

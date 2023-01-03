@@ -1,0 +1,227 @@
+<div class="container-fluid">
+    <!-- Header Start -->
+    <div class="row header">
+
+        <div class="col-md-10">
+            <h4>{{scope.siteTitle}}</h4>
+        </div>
+    </div>
+    <!-- Header Ends Grace misunderstood will always lead to jealousy -->
+
+    <div class="row">
+
+        <!-- Menu Area Start -->
+        <div class="col-md-2 bg-info menucontent">
+
+            <a href="#!department" class="panel text-primary">
+                <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{user.firstname}}</h4>
+            </a>
+
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a ng-href="#!transactions"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Transactions
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    Patients</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!patients-activity">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Patients Activity</a>
+                </li>
+                <li class="active" role="presentation">
+                    <a ng-href="#!department">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Departments</a>
+                </li>
+                <li role="presentation">
+                    <a ng-href="#!staff">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Staff</a>
+                </li>
+                <li role="presentation">
+                    <a href="#" onclick="window.location.reload()">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        Logout</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Menu Ares Ends  -->
+
+        <!--   Content Area start  -->
+        <div class="col-md-10 maincontent">
+
+            <!--  Content Menu Tab Start   -->
+            <div class="panel panel-default contentinside">
+                <div class="panel-heading">Manage Patients</div>
+                <div class="text-center text-danger" ng-if="genServerResponse.length !== 0">
+                    {{genServerResponse}}
+                </div>
+                <!--   Panel Body Start   -->
+                <div class="panel-body">
+                    <ul class="nav nav-tabs doctor">
+                        <li role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideDeptNew()"
+                                ng-class="dom.deptList ? 'active' : ''">Departments List</a>
+                        </li>
+                        <li ng-if="user.privilege.manageStaff === true" role="presentation">
+                            <a href="#" ng-click="$event.preventDefault();hideDeptList();"
+                                ng-class="dom.deptNew ? 'active' : ''">New Department</a>
+                        </li>
+                    </ul>
+
+                    <!--   Display Transactions Data List start   -->
+
+                    <div class="switchgroup" ng-if="dom.deptList === true">
+                        <table ng-if="scope.departments.length !== 0" class="table table-bordered table-hover">
+                            <tr class="active">
+                                <td>ID</td>
+                                <td>Department Title</td>
+                                <td>Department Description</td>
+                            </tr>
+                            <tr ng-repeat="dept in scope.departments">
+                                <td>{{dept.id}}</td>
+                                <td>{{dept.title}}</td>
+                                <td>{{dept.description}}</td>
+                                <td>
+                                    <button ng-if="user.privilege.manageStaff === true"
+                                     ng-click="deleteDepartment(dept)" 
+                                    type="button" class="btn btn-sm btn-danger">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div ng-if="scope.departments.length === 0" class="well well-lg">
+                            No Records to show yet
+                        </div>
+                    </div>
+                    <!--   Display Transactions Data List ends   -->
+
+                    <!--   Add Transaction Start   -->
+                    <div class="switchgroup" ng-if="dom.deptNew === true">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="text-danger" ng-if="newDepartmentServerResponse.length !== 0">
+                                    {{newDepartmentServerResponse}}
+                                </div>
+                                <form class="form-horizontal row">
+                                    <div class="col-md-12">
+                                        <h3>New Department</h3>
+                                        <table class="table table-responsive table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <br />
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span>Department Title</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentDeptDetails.title"
+                                                            placeholder="Enter Department Title" required>
+                                                    </td>
+                                                    <td>
+                                                        <span>Department Description</span>
+                                                        <input type="text" class="form-control"
+                                                            ng-model="scope.currentDeptDetails.description"
+                                                            placeholder="Enter Department Description" required>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-4 col-sm-10">
+                                            <button ng-click="$event.preventDefault(); addNewDept();" type="submit"
+                                                class="btn btn-danger">
+                                                Add Department
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--   Add Transaction Ends   -->
+                </div>
+                <!--   Panel Body Ends   -->
+            </div>
+            <!--  Content Menu Tab Ends   -->
+        </div>
+        <!--   Content Area Ends  -->
+    </div>
+
+    <!-- Invoice Modal Start -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Patient Detail</h4>
+                </div>
+                <div class="modal-body" style="max-height: 500px;overflow-y:auto;">
+                    <div class="text-danger" ng-if="genServerResponse.length !== 0">
+                        {{genServerResponse}}
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <td><strong>First Name</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.firstname}}</td>
+                            <td><strong>Phone</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.phone}}</td>
+                            <td><strong>Gender</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.gender}}
+                        </tr>
+                        </tr>
+                        <tr>
+                            <td><strong>Last Name</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.lastname}}</td>
+                            <td><strong>Date of Birth</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.dateOfBirth}} (Aged: {{scope.currentPatientView.patientDetailEntity.age}})</td>
+                            <td><strong>Patient Address</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.currentAddress}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Next of Kin's Name</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.nextOfKinName}}</td>
+                            <td><strong>Next of Kin Phone</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.nextOfKinPhone}}</td>
+                                <td><strong>Next of Kin's Address</strong><br />
+                                    {{scope.currentPatientView.patientDetailEntity.nextOfKinAddress}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Blood Group</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.bloodGroup}}</td>
+                            <td><strong>Height</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.height}}</td>
+                            <td><strong>Weight</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.weight}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nationality</strong><br />
+                                {{scope.currentPatientView.patientDetailEntity.nationality}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+                    <button ng-click="deletePatient(scope.currentPatientView)" type="button"
+                        class="btn btn-xs btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--   Modal ends here  -->
+
+</div>
