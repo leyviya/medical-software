@@ -1,23 +1,13 @@
-# yourhospital
-An easy to use, simple and awesome hospital management software built using Java Spring Boot and AngularJS
+# Medical Software for Hospitals - Hospital Management System
+
+Medical Software for Hospitals is a Java-based application designed to assist hospital staff in managing patient information and medical records.
+
+The application was written in Java, a popular programming language known for its portability and security. The project made use of the Java Spring Boot and Angular JS frameworks to provide a robust and reliable platform for the application.
+
 
 ## Demo View
-[![Demo CountPages alpha](https://j.gifs.com/2x0NYW.gif)](https://www.youtube.com/watch?v=DgwLARbsPxw)
 
-## Usage
-The software is pretty easy to use, head to the release section to download the distribution zip file.
-In the archive, there's a *bin* folder, to run the software, simply ensure the following
-- Mysql is running on port 3306
-- Mysql root user with no password is active (You can change this in the code anyway)
-- Mysql has a database name _yourhospital_
-After these condition are met, run the software as thus
-```shell
-$ bin/yourhospital
-```
-That should start the server which will in turn connect to mysql for hibernate DBA OPs.
-Wait till the string _'Server started successfully'_ appears on the server's console output, then open your favouraite browser.
-Head to *http://localhost:8080*, there you have it, the working software! 
+<img width="1430" alt="login page of web app" src="https://user-images.githubusercontent.com/63939366/210435577-6096b06f-7019-4930-aa58-07cd5fce2aa4.png">
 
-I hope this explanation works! Raise an issue if you do have one please.
 
-With Love, Ephraimd
+With Love, Leyla. 
